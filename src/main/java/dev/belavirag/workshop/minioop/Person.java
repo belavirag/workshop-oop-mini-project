@@ -1,27 +1,43 @@
 package dev.belavirag.workshop.minioop;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Person {
     private int personId;
     private String firstName, lastName;
 
-    private ArrayList<Book> books;
+    private Book[] books;
 
     public Person(int personId, String firstName, String lastName) {
         this.personId = personId;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.books = new ArrayList<>();
+        this.books = new Book[0];
     }
 
     public void loanBook(Book book) {
-        if (books.contains(book) || !book.isAvailable()) {
+        if (arrayContains(books, book) || !book.isAvailable()) {
             throw new IllegalArgumentException("Book already loaned!");
         }
 
         book.setPerson(this);
-        books.add(book);
+        books = addToArray(books, book);
+    }
+
+    private boolean arrayContains(Book[] books, Book book) {
+        for (Book b : books) {
+            if (b == book) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Book[] addToArray(Book[] arr, Book newBook) {
+        Book[] copyOf = Arrays.copyOf(arr, arr.length + 1);
+        copyOf[copyOf.length - 1] = newBook;
+        return copyOf;
     }
 
     public int getPersonId() {
@@ -49,7 +65,7 @@ public class Person {
     }
 
     public String displayBooks() {
-        return books.toString();
+        return Arrays.toString(books);
     }
 
     @Override
@@ -58,7 +74,7 @@ public class Person {
                 "personId=" + personId +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", books=" + books +
+                ", books=" + Arrays.toString(books) +
                 '}';
     }
 }
